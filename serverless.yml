@@ -35,12 +35,30 @@ functions:
       - http:
           method: get
           path: todos
-  insert:
-    handler: src/handler/handler.insert
+  get:
+    handler: src/handler/handler.getById
+    events:
+      - http:
+          method: get
+          path: todos/{id}
+  create:
+    handler: src/handler/handler.create
     events:
       - http:
           method: post
           path: todos
+  update:
+    handler: src/handler/handler.update
+    events:
+      - http:
+          method: put
+          path: todos/{id}
+  delete:
+    handler: src/handler/handler.deleteById
+    events:
+      - http:
+          method: delete
+          path: todos/{id}
 
 resources:
   Resources:

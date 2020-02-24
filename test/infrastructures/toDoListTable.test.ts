@@ -1,6 +1,6 @@
-import { ToDoList } from "../../src/domains/toDoList";
+import { ToDoList } from "../../src/domains/toDoListDomain";
 import ToDoListTable from "../../src/infrastructures/toDoListTable";
-import { insert } from "../../src/handler/handler";
+import { create, getList } from "../../src/handler/handler";
 
 // jest.mock で対象のファイルをモック化します
 jest.mock("../../src/infrastructures/dynamodb/toDoListTable");
@@ -15,12 +15,12 @@ describe("toDoListTable Input/Output", (): void => {
     };
 
     // モック化したモジュールに対して、呼び出される関数ものについては戻り値を定義します
-    const insertMock = (ToDoListTable.insert as jest.Mock).mockResolvedValue(
+    const insertMock = (ToDoListTable.create as jest.Mock).mockResolvedValue(
       null
     );
 
     // 入力値とモックが準備できたら、 Lambda Function を実行します
-    const response = await insert(insertData);
+    const response = await getList();
 
     // モック化した関数が1回だけコールされたことをテストします
     expect(insertMock.mock.calls.length).toBe(1);
