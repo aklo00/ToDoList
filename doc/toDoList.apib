@@ -1,0 +1,83 @@
+FORMAT: 1A
+HOST: http://localhost/api
+
+## ToDoListAPI [/todos]
+### ToDoList一覧取得 [GET /todos]
+ToDoListの一覧を取得する
+
++ Request (application/json)
+
++ Response 200 (application/json)
+    + Attributes
+        + id: `f522aa2f-1d26-4e72-a948-3b0fd60dbbac` (string) - ID
+        + title: `タイトル` (string) - タイトル
+        + content: `内容` (string) - 内容
+        + done: `true` (boolean) - 完了
+
+### ToDoList取得 [GET /todos/{id}]
+pathで指定されたIDのToDoListを取得する
+
++ Parameters
+    + id : `f522aa2f-1d26-4e72-a948-3b0fd60dbbac` (required) - 取得対象のToDoListのID
+
++ Request (application/json)
+
++ Response 200 (application/json)
+    + Body
+        ```
+        {
+            "id": "f522aa2f-1d26-4e72-a948-3b0fd60dbbac",
+            "title": "タイトル",
+            "content": "内容",
+            "done": true
+        }
+        ```
++ Response 404 (application/json)
+
+### ToDoList登録 [POST /todos]
+ToDoListを登録する
+
++ Request (application/json)
+    + Attributes
+        + title: `タイトル` (string, required)
+        + content: `内容` (string, required)
+        + done: `true` (boolean, required)
+
++ Response 200 (application/json)
+    + Body
+        ```
+        {
+            "id": "f522aa2f-1d26-4e72-a948-3b0fd60dbbac",
+        }
+        ```
+
++ Response 409 (application/json)
+
+
+### ToDoList更新 [PUT /todos/{id}]
+ToDoListを更新する
+
++ Parameters
+    + id: `f522aa2f-1d26-4e72-a948-3b0fd60dbbac` (required) - 更新対象のToDoListのID
+
++ Request (application/json)
+    + Attributes
+        + title: `タイトル` (string, required)
+        + content: `内容` (string, required)
+        + done: `true` (boolean, required)
+
++ Response 204 (application/json)
+
++ Response 404 (application/json)
+
+### ToDoList削除 [DELETE /todos/{id}]
+ToDoListを削除する
+
++ Parameters
+    + id: `f522aa2f-1d26-4e72-a948-3b0fd60dbbac` (required) - 削除対象のToDoListのID
+
++ Request (application/json)
+
++ Response 204 (application/json)
+
++ Response 404 (application/json)
