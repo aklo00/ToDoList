@@ -2,15 +2,14 @@ import * as AWS from "aws-sdk";
 import { ToDoList } from "../domains/toDoListDomain";
 import { APIGatewayProxyResult } from "aws-lambda";
 import * as uuid from "uuid";
-import { AWSError } from "aws-sdk";
 
-const TableName: string = "ToDoList";
-const DocClient = new AWS.DynamoDB.DocumentClient({
+export const TableName: string = "ToDoList";
+export const DocClient = new AWS.DynamoDB.DocumentClient({
   region: "ap-northeast-1",
   maxRetries: 5
 });
 
-export default class ToDoListTable {
+export class ToDoListTable {
   /**
    * 一覧取得処理
    */
@@ -22,14 +21,11 @@ export default class ToDoListTable {
       const res = await DocClient.scan(params).promise();
       return {
         statusCode: 200,
-        body: JSON.stringify(res)
+        body: JSON.stringify(res.Items)
       };
     } catch (err) {
-      let errorInfo = JSON.stringify(err);
+      const errorInfo = JSON.stringify(err);
       console.log("Error", errorInfo);
-      if (err instanceof AWSError) {
-        err.statusCode;
-      }
       return {
         statusCode: 500,
         body: errorInfo
@@ -57,13 +53,14 @@ export default class ToDoListTable {
       }
       return {
         statusCode: 200,
-        body: JSON.stringify(res)
+        body: JSON.stringify(res.Item)
       };
     } catch (err) {
-      console.log("Error", err);
+      const errorInfo = JSON.stringify(err);
+      console.log("Error", errorInfo);
       return {
         statusCode: 500,
-        body: JSON.stringify(err)
+        body: errorInfo
       };
     }
   }
@@ -89,10 +86,11 @@ export default class ToDoListTable {
         })
       };
     } catch (err) {
-      console.log("Error", err);
+      const errorInfo = JSON.stringify(err);
+      console.log("Error", errorInfo);
       return {
         statusCode: 500,
-        body: JSON.stringify(err)
+        body: errorInfo
       };
     }
   }
@@ -121,10 +119,11 @@ export default class ToDoListTable {
         body: null
       };
     } catch (err) {
-      console.log("Error", err);
+      const errorInfo = JSON.stringify(err);
+      console.log("Error", errorInfo);
       return {
         statusCode: 500,
-        body: JSON.stringify(err)
+        body: errorInfo
       };
     }
   }
@@ -146,10 +145,11 @@ export default class ToDoListTable {
         body: null
       };
     } catch (err) {
-      console.log("Error", err);
+      const errorInfo = JSON.stringify(err);
+      console.log("Error", errorInfo);
       return {
         statusCode: 500,
-        body: JSON.stringify(err)
+        body: errorInfo
       };
     }
   }

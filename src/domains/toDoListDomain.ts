@@ -1,4 +1,4 @@
-import ToDoListTable from "../infrastructures/toDoListTable";
+import { ToDoListTable } from "../infrastructures/toDoListTable";
 
 export interface ToDoList {
   id?: string;

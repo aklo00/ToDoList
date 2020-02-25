@@ -1,7 +1,7 @@
 import { APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
 import "source-map-support/register";
-import ToDoListTable from "../infrastructures/toDoListTable";
-import { ToDoList, ToDoListDomain } from "../domains/toDoListDomain";
+import { ToDoListTable } from "../infrastructures/toDoListTable";
+import { ToDoListDomain } from "../domains/toDoListDomain";
 
 /**
  * ToDoList一覧取得API

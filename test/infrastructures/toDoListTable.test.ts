@@ -1,42 +1,128 @@
+import { ToDoListTable, DocClient } from "../../src/infrastructures/toDoListTable";
 import { ToDoList } from "../../src/domains/toDoListDomain";
-import ToDoListTable from "../../src/infrastructures/toDoListTable";
-import { create, getList } from "../../src/handler/handler";
+import * as uuid from "uuid";
 
-// jest.mock で対象のファイルをモック化します
-jest.mock("../../src/infrastructures/dynamodb/toDoListTable");
-
-describe("toDoListTable Input/Output", (): void => {
-  test("hello usecase", async () => {
-    const insertData: ToDoList = {
-      id: "1",
-      title: "タイトル",
-      content: "内容",
+describe("toDoListTable getList", (): void => {
+  test("success", async () => {
+    const data1: ToDoList = {
+      id: "test_id1",
+      title: "タイトル1",
+      content: "内容1",
+      done: true
+    };
+    const data2: ToDoList = {
+      id: "test_id2",
+      title: "タイトル2",
+      content: "内容2",
       done: false
     };
+    // モック化
+    DocClient.scan = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Items: [data1, data2]
+      })
+    });
+    const res = await ToDoListTable.getList();
+    expect(res).toEqual({
+      statusCode: 200,
+      body: JSON.stringify([data1, data2])
+    });
+  });
+});
 
-    // モック化したモジュールに対して、呼び出される関数ものについては戻り値を定義します
-    const insertMock = (ToDoListTable.create as jest.Mock).mockResolvedValue(
-      null
-    );
-
-    // 入力値とモックが準備できたら、 Lambda Function を実行します
-    const response = await getList();
-
-    // モック化した関数が1回だけコールされたことをテストします
-    expect(insertMock.mock.calls.length).toBe(1);
-
-    const expected: ToDoList = {
-      id: "1",
+describe("toDoListTable getById", (): void => {
+  test("success", async () => {
+    const data: ToDoList = {
+      id: "test_id",
       title: "タイトル",
       content: "内容",
-      done: false
+      done: true
     };
+    // モック化
+    DocClient.get = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Item: data
+      })
+    });
+    const res = await ToDoListTable.getById("id");
+    expect(res).toEqual({
+      statusCode: 200,
+      body: JSON.stringify(data)
+    });
+  });
 
-    // 1回目の呼び出しのひとつめのパラメータが期待どおりに渡されていることをテストします
-    // 結果的に、ユースケース内のオブジェクト変換処理のテストにもなっています
-    expect(insertMock.mock.calls[0][0]).toEqual(expected);
+  test("err_404", async () => {
+    // モック化
+    DocClient.get = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Item: null
+      })
+    });
+    const res = await ToDoListTable.getById("id");
+    expect(res).toEqual({
+      statusCode: 404,
+      body: "Not Found"
+    });
+  });
+});
 
-    // レスポンスが期待どおりであることをテストします
-    expect(response).toEqual(expected);
+describe("toDoListTable create", (): void => {
+  test("success", async () => {
+    const data: ToDoList = {
+      id: "test_id",
+      title: "タイトル",
+      content: "内容",
+      done: true
+    };
+    // モック化
+    DocClient.put = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({})
+    });
+    jest.spyOn(uuid, "v4").mockReturnValue(data.id);
+
+    const res = await ToDoListTable.create(data);
+    expect(res).toEqual({
+      statusCode: 200,
+      body: JSON.stringify({
+        id: data.id
+      })
+    });
+  });
+});
+
+describe("toDoListTable update", (): void => {
+  test("success", async () => {
+    const data: ToDoList = {
+      id: "test_id",
+      title: "タイトル",
+      content: "内容",
+      done: true
+    };
+    // モック化
+    DocClient.update = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({})
+    });
+
+    const res = await ToDoListTable.update(data.id, data);
+    expect(res).toEqual({
+      statusCode: 204,
+      body: null
+    });
+  });
+});
+
+describe("toDoListTable delete", (): void => {
+  test("success", async () => {
+    const id: string = "test_id";
+    // モック化
+    DocClient.delete = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({})
+    });
+
+    const res = await ToDoListTable.delete(id);
+    expect(res).toEqual({
+      statusCode: 204,
+      body: null
+    });
   });
 });
